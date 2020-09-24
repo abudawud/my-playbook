@@ -1,0 +1,35 @@
+- name: provision for vm based kubernetes cluster on ubuntu 20.04 focal fossa host
+  hosts: ubuntu
+  become: yes
+
+  tasks:
+  - name: install nginx web proxy
+    apt:
+      name: nginx
+      state: latest
+
+  - name: enable nginx services
+    service:
+      name: nginx
+      state: started
+      enabled: yes
+
+  - name: install latest virtualisation package
+    apt:
+      pkg:
+        - qemu-kvm
+        - libvirt-daemon-system
+        - libvirt-daemon
+        - virtinst
+        - bridge-utils
+        - libosinfo-bin
+        - libguestfs-tools
+        - virt-top
+      state: latest
+
+  - name: configure kernel module
+    shell: modprobe vhost_net
+
+  - name: check module enabled
+    shell: lsmod | grep vhost
+    
